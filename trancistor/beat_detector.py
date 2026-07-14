@@ -1683,7 +1683,15 @@ function updateRecorderYaml(){
   const block = document.getElementById('recorder-yaml-block');
   const ids = Array.from(selectedLights).sort();
   if (!ids.length) { block.style.display = 'none'; return; }
-  const list = ids.map(id => `      - ${id}`).join('\n');
+  // NOTE: '\\n' (double backslash) is deliberate, not a typo. PAGE_HTML is a
+  // normal (non-raw) Python triple-quoted string, so Python's own escape
+  // processing collapses a single '\n' into a real newline BEFORE this ever
+  // reaches the browser - landing a raw line break inside a single-quoted JS
+  // string, which is a syntax error there (silently breaks the ENTIRE page
+  // script with no console output beyond "Invalid or unexpected token").
+  // Escaping the backslash here is what makes Python hand the browser the
+  // literal 2-character sequence backslash+n, for the JS engine to interpret.
+  const list = ids.map(id => `      - ${id}`).join('\\n');
   document.getElementById('recorder-yaml').value =
 `recorder:
   exclude:
