@@ -1213,7 +1213,7 @@ PAGE_HTML = """<!doctype html>
   .toggle-label { display:flex; align-items:center; gap:6px; font-size:13px; color:#ccc; }
   .toggle-label input { width:auto; }
   label { display:block; font-size:13px; margin:10px 0 4px; color:#ccc; }
-  input, select { width:100%; box-sizing:border-box; padding:8px; border-radius:6px; border:1px solid #333; background:#222; color:#eee; font-size:14px; }
+  input, select, textarea { width:100%; box-sizing:border-box; padding:8px; border-radius:6px; border:1px solid #333; background:#222; color:#eee; font-size:14px; }
   input[type=range] { padding:0; }
   button { padding:10px 16px; border-radius:8px; border:none; font-size:14px; font-weight:600; cursor:pointer; margin-top:10px; margin-right:8px; }
   .btn-primary { background:#4ade80; color:#111; }
@@ -1708,14 +1708,29 @@ ${list}`;
 async function copyRecorderYaml(){
   const ta = document.getElementById('recorder-yaml');
   const status = document.getElementById('copy-status');
+  ta.select();
+  ta.setSelectionRange(0, ta.value.length);
+  // The modern Clipboard API is blocked inside Home Assistant's ingress
+  // iframe (it needs a permissions-policy grant from the PARENT page, which
+  // we have no control over as the embedded addon). Try it anyway in case
+  // some setup allows it, then fall back to the older execCommand('copy') -
+  // it works differently (copies the current on-page selection rather than
+  // needing its own permission grant) and reliably works in this iframe
+  // context where the modern API doesn't. If even that fails, the text is
+  // still left selected so the user can just press Ctrl/Cmd+C themselves.
   try {
     await navigator.clipboard.writeText(ta.value);
     status.textContent = 'Copied!';
   } catch (e) {
-    // Clipboard API can be blocked inside the ingress iframe - fall back to
-    // selecting the text so the user can copy it themselves (Ctrl/Cmd+C).
-    ta.select();
-    status.textContent = 'Press Ctrl/Cmd+C to copy the selected text.';
+    try {
+      if (document.execCommand('copy')) {
+        status.textContent = 'Copied!';
+      } else {
+        status.textContent = 'Press Ctrl/Cmd+C to copy the selected text.';
+      }
+    } catch (e2) {
+      status.textContent = 'Press Ctrl/Cmd+C to copy the selected text.';
+    }
   }
   setTimeout(() => { status.textContent = ''; }, 4000);
 }
