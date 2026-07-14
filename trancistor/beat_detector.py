@@ -1685,7 +1685,7 @@ function updateRecorderYaml(){
   if (!ids.length) { block.style.display = 'none'; return; }
   // NOTE: '\\n' (double backslash) is deliberate, not a typo. PAGE_HTML is a
   // normal (non-raw) Python triple-quoted string, so Python's own escape
-  // processing collapses a single '\n' into a real newline BEFORE this ever
+  // processing collapses a single '\\n' into a real newline BEFORE this ever
   // reaches the browser - landing a raw line break inside a single-quoted JS
   // string, which is a syntax error there (silently breaks the ENTIRE page
   // script with no console output beyond "Invalid or unexpected token").
