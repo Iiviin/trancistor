@@ -1,0 +1,35 @@
+{
+  "name": "Trancistor",
+  "version": "1.3.0",
+  "slug": "trancistor",
+  "description": "Turn any room into a light show that reacts to the music in real time - 3-band (low/mid/high) onset detection + continuous flow levels from USB audio, with a live-tuning web UI",
+  "arch": ["aarch64"],
+  "startup": "application",
+  "boot": "auto",
+  "homeassistant_api": true,
+  "audio": true,
+  "ingress": true,
+  "ingress_port": 8099,
+  "watchdog": "tcp://[HOST]:8099",
+  "panel_icon": "mdi:equalizer",
+  "options": {
+    "band_thresholds": [0.0, 0.0, 0.0],
+    "band_lockout_ms": [320.0, 320.0, 320.0],
+    "band_enabled": [true, true, true],
+    "band_hz": [25.0, 80.0, 100.0, 800.0, 8000.0, 16000.0],
+    "flow_attack": [0.5, 0.5, 0.5],
+    "flow_release": [0.2, 0.2, 0.2],
+    "flow_gamma": [2.2, 2.2, 2.2],
+    "flow_memory_s": [30.0, 30.0, 30.0]
+  },
+  "schema": {
+    "band_thresholds": ["float"],
+    "band_lockout_ms": ["float"],
+    "band_enabled": ["bool"],
+    "band_hz": ["float"],
+    "flow_attack": ["float"],
+    "flow_release": ["float"],
+    "flow_gamma": ["float"],
+    "flow_memory_s": ["float"]
+  }
+}
